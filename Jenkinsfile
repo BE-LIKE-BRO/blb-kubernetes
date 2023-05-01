@@ -2,8 +2,16 @@ pipeline {
 
     agent any
 
+    parameters {
+        choice (
+            name: 'ACTION',
+            choices: ['apply','delete'],
+            description: 'Do you want to apply or delete the kluster?'
+        )
+    }
+
     environment {
-        KUBECONFIG = credentials('kube-creds')
+        // KUBECONFIG = credentials('kube-creds')
         NAMESPACE = "nobus-cloud-demo"
     }
 
@@ -18,16 +26,20 @@ pipeline {
 
          stage('Deploy Cluster') {
             input {
-                message "Do you want to Deploy the updated cluster??"
+                message "Sure you want to apply changes to this cluster?"
             }
 
             steps {
-                sh """
-                    kubectl apply -f mongo-secret.yaml -n ${NAMESPACE}
-                    kubectl apply -f mongo-configmap.yaml -n ${NAMESPACE}
-                    kubectl apply -f mongo-deployment.yaml -n ${NAMESPACE}
-                    kubectl apply -f mongo-express.yaml -n ${NAMESPACE}
-                """
+                withCredentials([string(credentialsId: 'kube-creds', variable: 'KUBECONFIG')]) {
+                    sh 'echo $KUBECONFIG | base64 -d > kubeconfig.yaml'
+                    sh 'kubectl --kubeconfig=kubeconfig.yaml get pods'
+                    sh """
+                    kubectl --kubeconfig=kubeconfig.yaml ${ACTION} -f mongo-secret.yaml -n ${NAMESPACE}
+                    kubectl --kubeconfig=kubeconfig.yaml ${ACTION} -f mongo-configmap.yaml -n ${NAMESPACE}
+                    kubectl --kubeconfig=kubeconfig.yaml ${ACTION} -f mongo-deployment.yaml -n ${NAMESPACE}
+                    kubectl --kubeconfig=kubeconfig.yaml ${ACTION} -f mongo-express.yaml -n ${NAMESPACE}
+                    """
+                }
             }
         }
     }
