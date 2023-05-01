@@ -24,15 +24,9 @@ pipeline {
             }
         }
 
-         stage('Deploy Cluster') {
-            input {
-                message "Sure you want to apply changes to this cluster?"
-            }
-
-            steps {
-                withCredentials([string(credentialsId: 'kube-creds', variable: 'KUBECONFIG')]) {
-                    sh 'echo $KUBECONFIG | base64 -d > kubeconfig.yaml'
-                    sh 'kubectl --kubeconfig=kubeconfig.yaml get pods'
+        stage('Deploy Cluster') {
+            withKubeConfig([credentialsId: 'kube-creds', serverUrl: '34.194.223.212:6443']) {
+                steps {
                     sh """
                     kubectl --kubeconfig=kubeconfig.yaml ${ACTION} -f mongo-secret.yaml -n ${NAMESPACE}
                     kubectl --kubeconfig=kubeconfig.yaml ${ACTION} -f mongo-configmap.yaml -n ${NAMESPACE}
