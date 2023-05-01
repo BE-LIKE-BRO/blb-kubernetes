@@ -25,6 +25,10 @@ pipeline {
         }
 
         stage('Deploy Cluster') {
+            input {
+                message "Do you want to apply changes to cluster?"
+            }
+
             steps {
                 withCredentials([file(credentialsId: 'kube-creds', variable: 'KUBECONFIG')]) {
                     sh """
