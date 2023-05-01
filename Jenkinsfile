@@ -4,7 +4,7 @@ pipeline {
 
     environment {
         KUBECONFIG = credentials('kube-creds')
-        NAMESPACE-1 = "nobus-cloud-demo"
+        NAMESPACE = "nobus-cloud-demo"
     }
 
     stages {
@@ -23,10 +23,10 @@ pipeline {
 
             steps {
                 sh """
-                    kubectl apply -f mongo-secret.yaml -n ${NAMESPACE-1}
-                    kubectl apply -f mongo-configmap.yaml -n ${NAMESPACE-1}
-                    kubectl apply -f mongo-deployment.yaml -n ${NAMESPACE-1}
-                    kubectl apply -f mongo-express.yaml -n ${NAMESPACE-1}
+                    kubectl apply -f mongo-secret.yaml -n ${NAMESPACE}
+                    kubectl apply -f mongo-configmap.yaml -n ${NAMESPACE}
+                    kubectl apply -f mongo-deployment.yaml -n ${NAMESPACE}
+                    kubectl apply -f mongo-express.yaml -n ${NAMESPACE}
                 """
             }
         }
