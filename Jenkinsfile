@@ -26,12 +26,10 @@ pipeline {
 
         stage('Deploy Cluster') {
             steps {
-                withKubeConfig([credentialsId: 'kube-creds', serverUrl: '34.194.223.212:6443']) {
+                withCredentials([file(credentialsId: 'kube-creds', variable: 'KUBECONFIG')]) {
                     sh """
-                    kubectl --kubeconfig=kubeconfig.yaml ${ACTION} -f mongo-secret.yaml -n ${NAMESPACE}
-                    kubectl --kubeconfig=kubeconfig.yaml ${ACTION} -f mongo-configmap.yaml -n ${NAMESPACE}
-                    kubectl --kubeconfig=kubeconfig.yaml ${ACTION} -f mongo-deployment.yaml -n ${NAMESPACE}
-                    kubectl --kubeconfig=kubeconfig.yaml ${ACTION} -f mongo-express.yaml -n ${NAMESPACE}
+                    kubectl ${ACTION} -f mongo-backend.yaml -n ${NAMESPACE}
+                    kubectl ${ACTION} -f mongo-express.yaml -n ${NAMESPACE}
                     """
                 }
             }
