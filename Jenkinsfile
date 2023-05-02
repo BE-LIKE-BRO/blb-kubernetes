@@ -30,7 +30,7 @@ pipeline {
             }
 
             steps {
-                withCredentials([file(credentialsId: 'nobus-creds', variable: 'KUBECONFIG')]) {
+                withCredentials([file(credentialsId: 'kube-creds', variable: 'KUBECONFIG')]) {
                     sh """
                     kubectl ${ACTION} -f mongo-backend.yaml -n ${NAMESPACE}
                     kubectl ${ACTION} -f mongo-express.yaml -n ${NAMESPACE}
