@@ -25,12 +25,12 @@ pipeline {
         }
 
         stage('Deploy Cluster') {
-//             input {
-//                 message "Do you want to apply changes to cluster?"
-//             }
+            input {
+                message "Do you want to apply changes to cluster?"
+            }
 
             steps {
-                withCredentials([file(credentialsId: 'kube-creds', variable: 'KUBECONFIG')]) {
+                withCredentials([file(credentialsId: 'nobus-creds', variable: 'KUBECONFIG')]) {
                     sh """
                     kubectl ${ACTION} -f mongo-backend.yaml -n ${NAMESPACE}
                     kubectl ${ACTION} -f mongo-express.yaml -n ${NAMESPACE}
